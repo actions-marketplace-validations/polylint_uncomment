@@ -6,6 +6,13 @@ This changelog is generated from git tags and commit history.
 
 ## [Unreleased]
 
+### Added
+
+- `Processor::inspect_with` and `Processor::plan_removals_with` take a closure that supplies the parse tree, so a
+  host that already parsed the file (or reparses incrementally) does not parse it again. The closure receives the
+  grammar resolved from the path and the processor's parser; `uncomment::tree_sitter` re-exports the tree-sitter
+  version in that signature.
+
 ### Changed
 
 - npm and PyPI now ship the binary in per-platform packages, so installing on macOS, glibc Linux

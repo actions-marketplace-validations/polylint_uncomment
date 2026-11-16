@@ -21,6 +21,9 @@ pub mod ui;
 
 pub use processor::{ProcessingOptions, Processor, Removal};
 pub use rules::preservation::PreservationRule;
+/// The tree-sitter version the [`Processor::inspect_with`] and
+/// [`Processor::plan_removals_with`] signatures use, so callers name the same types.
+pub use tree_sitter;
 
 use std::error::Error;
 use std::fmt;

@@ -352,8 +352,31 @@ impl Processor {
     /// `anyhow`) when `path`'s extension maps to no known language, and propagates
     /// grammar-load / parse failures.
     pub fn plan_removals(&mut self, content: &str, path: &Path, config: &ResolvedConfig) -> Result<Vec<Removal>> {
+        self.plan_removals_with(content, path, config, parse_fresh(content))
+    }
+
+    /// [`Self::plan_removals`] over a parse tree the caller supplies, so a host that
+    /// already parsed `content` (or keeps a tree to reparse incrementally) does not
+    /// parse it a second time.
+    ///
+    /// See [`Self::inspect_with`] for the contract `parse` must honour.
+    ///
+    /// # Errors
+    ///
+    /// As [`Self::plan_removals`]; `parse` returning `None` yields the same error as a
+    /// failed parse.
+    pub fn plan_removals_with<F>(
+        &mut self,
+        content: &str,
+        path: &Path,
+        config: &ResolvedConfig,
+        parse: F,
+    ) -> Result<Vec<Removal>>
+    where
+        F: FnOnce(&tree_sitter::Language, &mut tree_sitter::Parser) -> Option<tree_sitter::Tree>,
+    {
         let removals = self
-            .inspect(content, path, config)?
+            .inspect_with(content, path, config, parse)?
             .into_iter()
             .filter_map(|comment| match comment.verdict {
                 Verdict::Remove {
@@ -390,6 +413,39 @@ impl Processor {
     /// Returns an error when `path`'s extension maps to no known language, and
     /// propagates grammar-load / parse failures.
     pub fn inspect(&mut self, content: &str, path: &Path, config: &ResolvedConfig) -> Result<Vec<InspectedComment>> {
+        self.inspect_with(content, path, config, parse_fresh(content))
+    }
+
+    /// [`Self::inspect`] over a parse tree the caller supplies.
+    ///
+    /// The language is resolved from `path` and set on this processor's parser exactly
+    /// as in `inspect`; `parse` then receives that grammar and the parser, and returns
+    /// the tree for `content`. It may parse with the parser, reparse incrementally
+    /// against an edited old tree, or hand back a tree it already holds. The tree must
+    /// come from `content` parsed with that grammar: comment ranges are byte offsets
+    /// into `content`, and node kinds are matched against the grammar's comment types.
+    ///
+    /// The types are the raw `tree_sitter` ones, re-exported as
+    /// [`crate::tree_sitter`], rather than tree-sitter-language-pack's `Parser`/`Tree`
+    /// wrappers: those wrap the same `tree_sitter` types but expose no way to share
+    /// or reuse the underlying tree, so a host keeping its own `tree_sitter::Tree`
+    /// could not supply it. tree-sitter-language-pack re-exports
+    /// `tree_sitter::Language`, so its `get_language` result is the same type.
+    ///
+    /// # Errors
+    ///
+    /// As [`Self::inspect`]; `parse` returning `None` yields the same error as a failed
+    /// parse.
+    pub fn inspect_with<F>(
+        &mut self,
+        content: &str,
+        path: &Path,
+        config: &ResolvedConfig,
+        parse: F,
+    ) -> Result<Vec<InspectedComment>>
+    where
+        F: FnOnce(&tree_sitter::Language, &mut tree_sitter::Parser) -> Option<tree_sitter::Tree>,
+    {
         let language_config = self
             .registry
             .detect_language_arc(path)
@@ -404,10 +460,7 @@ impl Processor {
         self.parser
             .set_language(&language)
             .context("Failed to set parser language")?;
-        let tree = self
-            .parser
-            .parse(content, None)
-            .context("Failed to parse source code")?;
+        let tree = parse(&language, &mut self.parser).context("Failed to parse source code")?;
 
         let preservation_rules = self.create_preservation_rules_from_config(config);
         let mut visitor = CommentVisitor::new_with_language(
@@ -532,6 +585,12 @@ pub struct InspectedComment {
     /// `///` as a plain `line_comment` the handler never flags, while a Go `// Foo does
     /// …` above a declaration is documentation written in line-comment syntax.
     pub is_documentation: bool,
+}
+
+/// The parse closure behind [`Processor::inspect`]: a fresh, non-incremental parse
+/// with the processor's parser, which already carries the resolved grammar.
+fn parse_fresh(content: &str) -> impl FnOnce(&tree_sitter::Language, &mut Parser) -> Option<tree_sitter::Tree> + '_ {
+    move |_, parser| parser.parse(content, None)
 }
 
 /// Name why a preserved comment survived, or `None` for one that is being removed or

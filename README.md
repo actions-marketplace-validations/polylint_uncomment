@@ -184,6 +184,16 @@ feature. Library consumers that only need the per-file `Processor` API opt out:
 uncomment = { version = "3", default-features = false }
 ```
 
+`Processor::plan_removals` and `Processor::inspect` parse the file themselves. A host that already holds a
+tree-sitter tree for the same content passes it in through `plan_removals_with` / `inspect_with`: the closure gets
+the grammar uncomment resolved from the path and uncomment's own parser (already set to that grammar), and returns
+the tree, either one it holds or `parser.parse(content, Some(&old_tree))` for an incremental reparse. Name the types
+through `uncomment::tree_sitter` so both sides use the same tree-sitter version.
+
+```rust
+let removals = processor.plan_removals_with(content, path, &config, |_language, _parser| Some(tree))?;
+```
+
 </details>
 
 ## Supported Languages
