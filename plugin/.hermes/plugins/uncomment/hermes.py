@@ -1,6 +1,6 @@
 # AI-RULEZ :: GENERATED FILE — DO NOT EDIT
 # Content-Hash: blake3:f0861e3a09f285cd65f5c91452dbe9269b3364f36d138b56dab9f1e5f972ba27
-# Source-Hash: blake3:8f05649ed012b7a719dacbbc56a3b40717aed05170343584785d1eed00c0261e
+# Source-Hash: blake3:319cc914b733b217feafd67b72140d1ad7515620247cb32297875ea213591052
 # Schema-Version: v1
 
 """Register the bundled read-only skill with Hermes Agent."""

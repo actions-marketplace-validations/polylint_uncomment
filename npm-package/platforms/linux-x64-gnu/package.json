@@ -1,6 +1,6 @@
 {
   "name": "@polylint/uncomment-linux-x64-gnu",
-  "version": "3.12.0",
+  "version": "3.12.1",
   "description": "The Linux x64 (glibc) uncomment binary for @polylint/uncomment. Not useful on its own.",
   "homepage": "https://github.com/polylint/uncomment#readme",
   "bugs": {

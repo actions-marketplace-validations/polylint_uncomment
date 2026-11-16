@@ -1,6 +1,6 @@
 {
   "name": "@polylint/uncomment",
-  "version": "3.12.0",
+  "version": "3.12.1",
   "description": "A fast Rust-based CLI tool for removing comments from source code",
   "bin": {
     "uncomment": "bin/uncomment"
@@ -39,11 +39,11 @@
     "tar": "^7.5.23"
   },
   "optionalDependencies": {
-    "@polylint/uncomment-darwin-arm64": "3.12.0",
-    "@polylint/uncomment-darwin-x64": "3.12.0",
-    "@polylint/uncomment-linux-arm64-gnu": "3.12.0",
-    "@polylint/uncomment-linux-x64-gnu": "3.12.0",
-    "@polylint/uncomment-win32-x64": "3.12.0"
+    "@polylint/uncomment-darwin-arm64": "3.12.1",
+    "@polylint/uncomment-darwin-x64": "3.12.1",
+    "@polylint/uncomment-linux-arm64-gnu": "3.12.1",
+    "@polylint/uncomment-linux-x64-gnu": "3.12.1",
+    "@polylint/uncomment-win32-x64": "3.12.1"
   },
   "files": [
     "README.md",

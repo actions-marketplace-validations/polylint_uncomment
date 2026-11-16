@@ -6,6 +6,13 @@ This changelog is generated from git tags and commit history.
 
 ## [Unreleased]
 
+## [v3.12.1] - 2026-11-16
+
+### Changed
+
+- Release builds use fat LTO and one codegen unit at `opt-level = 3`, and strip symbols, so every archive, npm
+  platform package and wheel ships a faster and much smaller binary (#151).
+
 ## [v3.12.0] - 2026-11-16
 
 ### Added
