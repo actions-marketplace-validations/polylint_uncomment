@@ -6,6 +6,8 @@ This changelog is generated from git tags and commit history.
 
 ## [Unreleased]
 
+## [v3.12.0] - 2026-11-16
+
 ### Added
 
 - `Processor::inspect_with` and `Processor::plan_removals_with` take a closure that supplies the parse tree, so a
