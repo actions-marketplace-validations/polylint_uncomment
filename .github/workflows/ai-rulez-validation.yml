@@ -9,7 +9,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - uses: xberg-io/actions/setup-ai-rulez@v1
       - uses: xberg-io/actions/validate-ai-rulez@v1
         with:
@@ -35,7 +35,7 @@ jobs:
           npm install --prefix .native/sdk --ignore-scripts --no-package-lock @opencode/plugin@2.0.26 @earendil-works/pi-coding-agent@1.2.0 effect@4.0.0-rc.112
           node --test scripts/tests/native-skills.test.mjs
       - name: Check out the pinned Hermes plugin SDK
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with:
           repository: NousResearch/hermes-agent
           ref: caf557be5b4c9ae75b3a7566d65d3df2c701c5df

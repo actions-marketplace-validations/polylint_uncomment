@@ -41,7 +41,7 @@ jobs:
         os: [ubuntu-latest, macos-26, windows-latest, ubuntu-24.04-arm]
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
 
       - name: Write fixtures
         shell: bash
